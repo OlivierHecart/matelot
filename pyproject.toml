@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "matelot"
+version = "0.1.0"
+description = "Seaborn extension"
+requires-python = ">=3.10"
+dependencies = [
+    "seaborn>=0.13",
+    "pandas>=1.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "matplotlib>=3.5",
+]
