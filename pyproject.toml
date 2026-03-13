@@ -5,15 +5,31 @@ build-backend = "hatchling.build"
 [project]
 name = "matelot"
 version = "0.1.0"
-description = "Seaborn extension"
+description = "Seaborn extension with brightness grouping and interactive annotations"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
+authors = [
+    { name = "Olivier Hecart" },
+]
+keywords = ["seaborn", "matplotlib", "visualization", "plot"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
 dependencies = [
+    "matplotlib>=3.5",
     "seaborn>=0.13",
     "pandas>=1.5",
 ]
 
+[project.urls]
+Homepage = "https://github.com/OlivierHecart/matelot"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7",
-    "matplotlib>=3.5",
 ]
