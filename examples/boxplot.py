@@ -29,4 +29,4 @@ plt.grid(which="major", color="grey", linestyle="-", linewidth=0.2)
 plt.grid(which="minor", color="grey", linestyle=":", linewidth=0.1, axis="y")
 plt.title("Throughput (msg/s)")
 
-plt.show()
+plt.savefig("boxplot.svg")

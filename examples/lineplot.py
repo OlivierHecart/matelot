@@ -19,6 +19,7 @@ matelot.lineplot(
     hue="branch",
     hue_order=["1.0", "main", "dev"],
     brightness="binary",
+    annotated=True,
 )
     
 plt.legend(loc="lower left", title="median msg/s")
@@ -31,4 +32,4 @@ plt.grid(which="major", color="grey", linestyle="-", linewidth=0.2)
 plt.grid(which="minor", color="grey", linestyle=":", linewidth=0.1, axis="y")
 plt.title("Throughput (msg/s)")
 
-plt.show()
+matelot.savefig("lineplot.svg")

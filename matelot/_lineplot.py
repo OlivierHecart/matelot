@@ -5,12 +5,36 @@ A brightness-aware wrapper around seaborn.lineplot.
 """
 from __future__ import annotations
 
+import uuid
 from typing import Any
 
+import matplotlib as mpl
 import pandas as pd
 import seaborn as sns
 
 from matelot._core import ColumnName, _Vector, prepare_brightness
+
+
+def _annotate_lines(ax: Any, uid: str, skip_lines: set) -> None:
+    fmt = mpl.ticker.EngFormatter(unit="", places=2)
+    for line in ax.get_lines():
+        if line in skip_lines:
+            continue
+        if line.get_label().startswith("_child"):
+            line.set_gid(f"_matelot_line_{uid}_{line.get_label()}")
+            for i, (x, y) in enumerate(zip(line.get_xdata(), line.get_ydata())):
+                annotation = ax.annotate(
+                    fmt(y),
+                    (x, y + abs(y) * 0.1),
+                    bbox=dict(
+                        boxstyle="round,pad=.2",
+                        fc=(1.0, 1.0, 1.0),
+                        ec=(0.8, 0.8, 0.8),
+                        lw=1,
+                        zorder=1,
+                    ),
+                )
+                annotation.set_gid(f"_matelot_tooltip_{uid}_{line.get_label()}_{i}")
 
 
 def lineplot(
@@ -43,6 +67,7 @@ def lineplot(
     legend: str = "auto",
     ax: Any = None,
     brightness: ColumnName | _Vector | None = None,
+    annotated: bool = False,
     **kwargs: Any,
 ) -> Any:
     """
@@ -61,8 +86,10 @@ def lineplot(
     ValueError
         If `brightness` is provided but `hue` is not.
     """
+    lines_before: set = set(ax.get_lines()) if ax is not None else set()
+
     if brightness is None:
-        return sns.lineplot(
+        ax_result = sns.lineplot(
             data=data,
             x=x, y=y,
             hue=hue, size=size, style=style,
@@ -77,26 +104,31 @@ def lineplot(
             legend=legend, ax=ax,
             **kwargs,
         )
+    else:
+        df, combined_palette, combined_hue_order = prepare_brightness(
+            data, hue, brightness, palette, hue_order, "lineplot"
+        )
+        ax_result = sns.lineplot(
+            data=df,
+            x=x, y=y,
+            hue="_matelot_combined",
+            size=size, style=style,
+            units=units, weights=weights,
+            palette=combined_palette,
+            hue_order=combined_hue_order,
+            hue_norm=hue_norm,
+            sizes=sizes, size_order=size_order, size_norm=size_norm,
+            dashes=dashes, markers=markers, style_order=style_order,
+            estimator=estimator, errorbar=errorbar,
+            n_boot=n_boot, seed=seed,
+            orient=orient, sort=sort,
+            err_style=err_style, err_kws=err_kws,
+            legend=legend, ax=ax,
+            **kwargs,
+        )
 
-    df, combined_palette, combined_hue_order = prepare_brightness(
-        data, hue, brightness, palette, hue_order, "lineplot"
-    )
+    if annotated:
+        uid = uuid.uuid4().hex[:8]
+        _annotate_lines(ax_result, uid, lines_before)
 
-    return sns.lineplot(
-        data=df,
-        x=x, y=y,
-        hue="_matelot_combined",
-        size=size, style=style,
-        units=units, weights=weights,
-        palette=combined_palette,
-        hue_order=combined_hue_order,
-        hue_norm=hue_norm,
-        sizes=sizes, size_order=size_order, size_norm=size_norm,
-        dashes=dashes, markers=markers, style_order=style_order,
-        estimator=estimator, errorbar=errorbar,
-        n_boot=n_boot, seed=seed,
-        orient=orient, sort=sort,
-        err_style=err_style, err_kws=err_kws,
-        legend=legend, ax=ax,
-        **kwargs,
-    )
+    return ax_result
