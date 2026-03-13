@@ -2,7 +2,11 @@
 
 ## Brightness grouping
 
-Add a grouping variable that will produce lines or boxplots with different brightnesses when using `lineplot` or `boxplot`.
+Matelot provides `lineplot` and `boxplot` functions that behave as seaborn `lineplot` and `boxplot` functions with an extra `brightness` argument:
+
+**brightness** : *vector or key in `data`*
+
+- Grouping variable that will produce points with different colors. 
 
 Example:
 ```
@@ -16,9 +20,37 @@ matelot.lineplot(
 )
 ```
 
+<img src="https://github.com/OlivierHecart/matelot/blob/main/lineplot1.svg?raw=true">
+
+## Annotations
+
+Matelot `lineplot` function accepts an extra `annotate` argument:
+
+**annotate** : *bool or literal*
+- Automatic annotation of lineplot points with their y value.
+
+Example:
+```
+matelot.lineplot(
+    data=df,
+    x="payload",
+    y="msg/s",
+    estimator="median",
+    annotate=True,
+)
+```
+
+<img src="https://github.com/OlivierHecart/matelot/blob/main/lineplot2.svg?raw=true">
+
 ## Interactive annotations
 
-Generate svg files that show plotted values as annotations when placing mouse cursor over a plotted line.
+Matelot `lineplot` function `annotate` argument accepts literal value `"interactive"` that makes annotations only appear on mouseover events.
+
+When using the interactive annotation the matplotlib figure needs to be either:
+ - turned to an interactive figure through the matelot `interactive` function.
+ - saved through the matelot `savefig` function.
+
+ Interactive annotations only work with `svg` output format.
 
 Example:
 ```
@@ -30,15 +62,12 @@ matelot.lineplot(
     y="msg/s",
     marker="o",
     estimator="median",
-    hue="branch",
-    hue_order=["1.0", "main", "dev"],
-    brightness="binary",
-    annotated=True,
+    annotate=True,
     ax=ax,
 )
 
 fig = matelot.interactive(fig)
-fig.savefig("lineplot2.svg")
+fig.savefig("lineplot.svg")
 ```
 
 Example using implicit interface:
@@ -48,18 +77,11 @@ matelot.lineplot(
     x="payload",
     y="msg/s",
     estimator="median",
-    hue="branch",
-    brightness="binary",
-    annotated=True,
+    annotate=True,
 )
 
 matelot.savefig("linepot.svg")
 ```
-
-
-## Example of generated svg:
-
-<img src="https://github.com/OlivierHecart/matelot/blob/main/lineplot.svg?raw=true">
 
 Note: to include the svg image in a web page, use an iframe:
 ```

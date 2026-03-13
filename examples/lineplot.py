@@ -19,7 +19,7 @@ matelot.lineplot(
     hue="branch",
     hue_order=["1.0", "main", "dev"],
     brightness="binary",
-    annotated=True,
+    annotate=True,
 )
     
 plt.legend(loc="lower left", title="median msg/s")

@@ -6,7 +6,7 @@ A brightness-aware wrapper around seaborn.lineplot.
 from __future__ import annotations
 
 import uuid
-from typing import Any
+from typing import Any, Literal
 
 import matplotlib as mpl
 import pandas as pd
@@ -15,13 +15,16 @@ import seaborn as sns
 from matelot._core import ColumnName, _Vector, prepare_brightness
 
 
-def _annotate_lines(ax: Any, uid: str, skip_lines: set) -> None:
+def _annotate_lines(
+    ax: Any, mode: Literal["interactive", "static"], uid: str, skip_lines: set
+) -> None:
     fmt = mpl.ticker.EngFormatter(unit="", places=2)
     for line in ax.get_lines():
         if line in skip_lines:
             continue
         if line.get_label().startswith("_child"):
-            line.set_gid(f"_matelot_line_{uid}_{line.get_label()}")
+            if mode == "interactive":
+                line.set_gid(f"_matelot_line_{uid}_{line.get_label()}")
             for i, (x, y) in enumerate(zip(line.get_xdata(), line.get_ydata())):
                 annotation = ax.annotate(
                     fmt(y),
@@ -34,7 +37,8 @@ def _annotate_lines(ax: Any, uid: str, skip_lines: set) -> None:
                         zorder=1,
                     ),
                 )
-                annotation.set_gid(f"_matelot_tooltip_{uid}_{line.get_label()}_{i}")
+                if mode == "interactive":
+                    annotation.set_gid(f"_matelot_tooltip_{uid}_{line.get_label()}_{i}")
 
 
 def lineplot(
@@ -67,7 +71,7 @@ def lineplot(
     legend: str = "auto",
     ax: Any = None,
     brightness: ColumnName | _Vector | None = None,
-    annotated: bool = False,
+    annotate: Literal["interactive", "static"] | bool | None = None,
     **kwargs: Any,
 ) -> Any:
     """
@@ -127,8 +131,16 @@ def lineplot(
             **kwargs,
         )
 
-    if annotated:
+    mode: Literal["interactive", "static"] | None
+    if annotate is True:
+        mode = "static"
+    elif annotate is False or annotate is None:
+        mode = None
+    else:
+        mode = annotate
+
+    if mode is not None:
         uid = uuid.uuid4().hex[:8]
-        _annotate_lines(ax_result, uid, lines_before)
+        _annotate_lines(ax_result, mode, uid, lines_before)
 
     return ax_result
