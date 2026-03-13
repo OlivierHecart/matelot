@@ -6,7 +6,7 @@ Matelot provides `lineplot` and `boxplot` functions that behave as seaborn `line
 
 **brightness** : *vector or key in `data`*
 
-- Grouping variable that will produce points with different colors. 
+- Grouping variable that will produce lines with different brightness. 
 
 Example:
 ```
@@ -27,7 +27,7 @@ matelot.lineplot(
 Matelot `lineplot` function accepts an extra `annotate` argument:
 
 **annotate** : *bool or literal*
-- Automatic annotation of lineplot points with their y value.
+- Automatic annotation of lineplot points with their `y` value.
 
 Example:
 ```
