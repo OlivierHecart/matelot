@@ -80,7 +80,7 @@ matelot.lineplot(
     annotate=True,
 )
 
-matelot.savefig("linepot.svg")
+matelot.savefig("lineplot.svg")
 ```
 
 Note: to include the svg image in a web page, use an iframe:
