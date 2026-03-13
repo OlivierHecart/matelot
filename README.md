@@ -16,5 +16,5 @@ matelot.lineplot(
 )
 ```
 
-<img src="https://raw.githubusercontent.com/OlivierHecart/matelot/lineplot.png">
+<img src="https://github.com/OlivierHecart/matelot/blob/main/lineplot.png?raw=true">
 
